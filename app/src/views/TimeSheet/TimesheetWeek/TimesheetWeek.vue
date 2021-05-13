@@ -1,0 +1,274 @@
+<template>
+
+    <v-simple-table class='timesheet-week-wrapper'>
+        <template v-slot:default>
+            <thead>
+            <tr>
+                <th class='th-name'>
+                </th>
+                <template v-for='(weekday) in $_.orderBy(Object.values(weekdays), ["order"], ["asc"])'>
+                    <th :class='weekday.label ? "th-weekday" : "th-total"'
+                        :key='"header-"+weekday.id'>
+                        <div class='label'>
+                            {{ weekday.label }}
+                        </div>
+                        <div class='date'>
+                            {{ weekday.date }}
+                        </div>
+                    </th>
+                </template>
+                <th class='th-delete'>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr
+                v-for='row in $_.orderBy(Object.values(modifiedRows), ["project_id", "updated_at", ],["asc", "desc"])'
+                class='week-view-entry'
+                :key='row.id+ "-row"'
+            >
+                <td class='td-name'>
+                    <div class='project-client'>
+                            <span class='project'>[{{ row.project_code }}] {{ row.project_name
+                                }}</span>
+                        <span class='client'>({{ row.client_name }})</span>
+                    </div>
+                    <div class='task-notes'>
+                        <span class='task'>{{ row.task_name }}</span>
+                    </div>
+                </td>
+                <td v-for='weekday in $_.orderBy(Object.values(row.weekdays), ["order"], ["asc"])'
+                    :key='row.id + "-" +weekday.id'
+                    :class='weekday.label ? "td-weekday" : "td-total"'>
+                    <Input v-if='weekday.label'
+                           :class-name='[$style["input-hours"]]'
+                           :value='weekday.hours > 0 ? $utils.toTime(weekday.hours) : ""'
+                           :props-to-pass='{
+                                    rules: [
+                                        (v) =>  !v || (v &&v.trim().length ===0) ||$utils.isTime(v, true)
+                                    ]
+                               }'
+                           @onChange='(newValue) => handleChangeInput(row.id,weekday.id, newValue)'
+
+                    />
+                    <span v-else>{{ $utils.toTime(weekday.hours) }}</span>
+                </td>
+                <td class='delete'>
+                    <div class='btn-delete' @click='() =>handleDelete(row.id)'>
+                        <v-icon small>mdi-close</v-icon>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td class='td-name'>
+                    <Button :btn-class-name='$style["btn-add-row"]'>
+                        <template v-slot:btn-label>
+                            <v-icon>mdi-plus</v-icon>
+                            <span>New Row</span>
+                        </template>
+                    </Button>
+
+                    <Button :btn-class-name='$style["btn-save"]'
+
+                            :props-to-pass='{
+                            disabled: $_.isEqual(rows, modifiedRows),
+                            color: "primary"
+                        }'
+                    >
+                        <template v-slot:btn-label>
+                            Save
+                        </template>
+                    </Button>
+                </td>
+
+                <td v-for='(weekday) in $_.orderBy(Object.values(weekdays), ["order"], ["asc"])'
+                    :key='"footer-" +weekday.label'
+                    :class='weekday.label ? "td-weekday" : "td-total"'>
+                    <div class='time'>
+                        {{ $utils.toTime(weekday.hours) }}
+                    </div>
+                </td>
+                <td class='td-delete'>
+                </td>
+            </tr>
+            </tfoot>
+        </template>
+    </v-simple-table>
+</template>
+
+<script>
+import json from '@/__mocks__/responses/timesheet_week.json';
+import Input from '@/components/Input/Input';
+import Button from '@/components/Button/Button';
+
+export default {
+    name: 'TimesheetWeek',
+    components: { Button, Input },
+    props: [
+        'entries',
+        'date'
+    ],
+    data: () => ({
+        weekdays: [],
+        rows: {},
+        modifiedRows: {}
+    }),
+    created() {
+        this._handleEntries([...json.day_entries]);
+    },
+    methods: {
+        handleChangeInput: function(rowId, weekDayId, newValue) {
+            const num = this.$utils.timeToNum(newValue, true);
+            if (!isNaN(num)) {
+                const oldHours = this.modifiedRows[rowId].weekdays[weekDayId].hours;
+                const diff = num - oldHours;
+
+                this.modifiedRows[rowId].weekdays[weekDayId].hours = num;
+                this.modifiedRows[rowId].weekdays.total.hours += diff;
+                this.weekdays[weekDayId].hours += diff;
+                this.weekdays.total.hours += diff;
+            }
+
+        },
+        handleDelete: function(rowId) {
+            Object.values(this.modifiedRows[rowId].weekdays).forEach(weekday => {
+                if (weekday.id !== 'total') {
+                    this.weekdays[weekday.id].hours -= weekday.hours;
+                    this.weekdays.total.hours -= weekday.hours;
+                }
+            });
+            delete this.modifiedRows[rowId];
+        },
+        _handleEntries: function(newEntries) {
+
+            const monday = this.$moment(this.date);
+            this.rows = {};
+
+            const weekdays = {
+                Mon: {
+                    order: 0,
+                    id: 'Mon',
+                    label: 'M',
+                    date: monday.format('DD MMM'),
+                    hours: 0
+                },
+                Tue: {
+                    order: 1,
+                    id: 'Tue',
+                    label: 'T',
+                    date: monday.clone().add(1, 'days').format('DD MMM'),
+                    hours: 0
+                },
+                Wed: {
+                    order: 2,
+                    id: 'Wed',
+                    label: 'W',
+                    date: monday.clone().add(2, 'days').format('DD MMM'),
+                    hours: 0
+                },
+                Thu: {
+                    order: 3,
+                    id: 'Thu',
+                    label: 'Th',
+                    date: monday.clone().add(3, 'days').format('DD MMM'),
+                    hours: 0
+                },
+                Fri: {
+                    order: 4,
+                    label: 'F',
+                    id: 'Fri',
+                    date: monday.clone().add(4, 'days').format('DD MMM'),
+                    hours: 0
+                },
+                Sat: {
+                    order: 5,
+                    id: 'Sat',
+                    label: 'S',
+                    date: monday.clone().add(5, 'days').format('DD MMM'),
+                    hours: 0
+                },
+                Sun: {
+                    order: 6,
+                    id: 'Sun',
+                    label: 'Su',
+                    date: monday.clone().add(6, 'days').format('DD MMM'),
+                    hours: 0
+                },
+                total: {
+                    order: 7,
+                    id: 'total',
+                    hours: 0
+                }
+            };
+            this.weekdays = this.$_.cloneDeep(weekdays);
+
+            newEntries.forEach((d) => {
+                const entry = d.day_entry;
+                const id = `${entry.project_id}-${entry.task_id}`;
+
+                if (!this.rows[id]) {
+                    this.rows[id] = {
+                        id: id,
+                        task_id: entry.task_id,
+                        project_id: entry.project_id,
+                        project_code: entry.project_code,
+                        project_name: entry.project_name,
+                        client_name: entry.client_name,
+                        task_name: entry.task_name,
+                        weekdays: this.$_.cloneDeep(weekdays),
+                        hours: 0,
+                        updated_at: entry.updated_at,
+                        create_at: entry.create_at
+                    };
+                }
+                const weekday = this.$moment(entry.spent_at).format('ddd');
+
+                this.rows[id].weekdays[weekday].hours += entry.hours;
+                this.rows[id].hours += entry.hours;
+                this.rows[id].weekdays.total.hours += entry.hours;
+
+                this.weekdays[weekday].hours += entry.hours;
+                this.weekdays.total.hours += entry.hours;
+                this.modifiedRows = this.$_.cloneDeep(this.rows);
+            });
+        }
+    }
+};
+</script>
+
+<style scoped lang='scss'>
+@import "style.scss";
+
+.v-data-table td {
+    //border-bottom: none !important;
+    padding: 12px 5px !important;
+
+}
+
+::v-deep .v-input__control {
+    .v-input__slot {
+        padding: 0 6px !important;
+        min-height: 35px !important;
+
+        input {
+            padding: 4px 0;
+            text-align: right;
+        }
+    }
+}
+
+</style>
+<style module lang='scss'>
+
+.input-hours {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-add-row {
+    margin-right: 10px;
+}
+</style>

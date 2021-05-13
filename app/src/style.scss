@@ -1,14 +1,27 @@
+html{
+
+}
 #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
+    //font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
     background-color: #f5f5f5;
+    font-family: 'Noto Sans', sans-serif;
+    * {
+        letter-spacing: normal !important;
+    }
+
+    *[class*='-active'] {
+        font-weight: bold;
+    }
 }
 
 main {
-    height: calc(100vh - 50px);
+    height: calc(100vh - 64px);
+    background-color: #fff;
+    line-height: 1.4;
+    color: #222;
 }
 
 .v-btn, .v-tab{

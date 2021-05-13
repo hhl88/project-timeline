@@ -24,11 +24,91 @@ const routes = [
     {
         path: '/time',
         name: 'Time',
-        component: () => import('@/views/Time/Time.vue'),
+        aliasPaths: ['/approve', '/missing_time'],
+        component: () => import('@/components/RouterTabs/RouterTabs.vue'),
+        props: {
+            items: [
+                { tab: 'Timesheet', route: '/time' },
+                { tab: 'Pending Approval', route: '/approve' },
+                { tab: 'Unsubmitted', route: '/missing_time' },
+            ]
+        },
         children: [
             {
+                path: '',
+                component: () => import('@/views/TimeSheet/Timesheet.vue')
+            },
+            {
                 path: ':showType/:year/:month/:day',
-                component: () => import('@/views/Time/Time.vue'),
+                component: () => import('@/views/TimeSheet/Timesheet.vue')
+            }
+
+        ],
+        meta: {
+            enabled: true,
+            showInHeader: true,
+            requiresAuth: false
+        }
+    },
+    {
+        path: '/approve',
+        name: 'Approval',
+        component: () => import('@/components/RouterTabs/RouterTabs.vue'),
+        props: {
+            items: [
+                { tab: 'Timesheet', route: '/time' },
+                { tab: 'Pending Approval', route: '/approve' },
+                { tab: 'Unsubmitted', route: '/missing_time' },
+            ]
+        },
+        children: [
+            {
+                path: '',
+                component: () => import('@/views/PendingApproval/PendingApproval.vue')
+            }
+        ],
+        meta: {
+            enabled: true,
+            showInHeader: false,
+            requiresAuth: false
+        }
+    },
+    {
+        path: '/missing_time',
+        name: 'Unsubmitted Timesheets',
+        component: () => import('@/components/RouterTabs/RouterTabs.vue'),
+        props: {
+            items: [
+                { tab: 'Timesheet', route: '/time' },
+                { tab: 'Pending Approval', route: '/approve' },
+                { tab: 'Unsubmitted', route: '/missing_time' },
+            ]
+        },
+        children: [
+            {
+                path: '',
+                component: () => import('@/views/UnsubmittedTimesheets/UnsubmittedTimesheets.vue')
+            }
+        ],
+        meta: {
+            enabled: true,
+            showInHeader: false,
+            requiresAuth: false
+        }
+    },
+    {
+        path: '/reports',
+        name: 'Reports',
+        component: () => import('@/components/RouterTabs/RouterTabs.vue'),
+        props: {
+            items: [
+                { tab: 'Time', route: '/reports' }
+            ]
+        },
+        children: [
+            {
+                path: '',
+                component: () => import('@/views/Reports/Reports.vue')
             }
         ],
         meta: {
@@ -49,6 +129,7 @@ const routes = [
 store.dispatch('router/setRouter', routes.map(route => {
     return {
         path: route.path,
+        aliasPaths: route.aliasPaths,
         name: route.name,
         meta: route.meta,
         active: false

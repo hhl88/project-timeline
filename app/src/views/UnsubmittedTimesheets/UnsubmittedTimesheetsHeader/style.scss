@@ -1,0 +1,44 @@
+.unsubmitted-timesheets-header-wrapper {
+    .header {
+        font-weight: 600;
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+
+    .hint {
+        font-size: 16px;
+    }
+
+    .interval-selection-wrapper {
+        display: flex;
+        flex: 1 1 auto;
+        margin: 10px 0;
+        justify-content: space-between;
+        align-items: center;
+
+        .interval-wrapper {
+            display: inline-flex;
+            flex: 1 1 auto;
+            justify-content: flex-end;
+            align-items: center;
+
+        }
+    }
+}
+
+
+::v-deep .v-input__control {
+    .v-input__slot {
+        padding: 0 6px !important;
+        min-height: 35px !important;
+
+        input {
+            padding: 4px 0;
+            text-align: center;
+
+            &::placeholder {
+                font-size: 12px;
+            }
+        }
+    }
+}

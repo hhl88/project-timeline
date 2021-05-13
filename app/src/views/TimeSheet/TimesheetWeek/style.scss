@@ -1,0 +1,159 @@
+.timesheet-week-wrapper {
+
+    tr:hover {
+        background-color: transparent !important;
+    }
+
+    td {
+        border-bottom: 1px solid #ccc !important;
+
+    }
+
+    thead {
+        th {
+            background-image: linear-gradient(#f6f6f6, #e6e6e6);
+            position: relative;
+            text-shadow: 0 1px 0 #fff;
+            border-top: 1px solid #ccc;
+            padding: 0;
+            border-bottom: 1px solid #ccc !important;
+
+        }
+
+        .th-name {
+
+            border-left: 1px solid #ccc;
+            border-top-left-radius: 6px;
+            border-bottom: 1px solid #ccc;
+
+        }
+
+        .th-weekday {
+            width: 60px;
+            padding: 10px 6px;
+            color: #666 !important;
+            text-align: right !important;
+
+            .label {
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .date {
+                font-size: 12px;
+            }
+
+            border-bottom: 1px solid #ccc;
+
+        }
+
+        .th-delete {
+            border-right: 1px solid #ccc;
+            border-top-right-radius: 6px;
+
+        }
+
+    }
+
+    tbody {
+        .td-name {
+            text-align: left;
+
+            .project-client {
+                overflow: hidden;
+                max-width: 100%;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+                .project {
+                    font-weight: 600;
+                    margin-right: 3px;
+                }
+
+                .client {
+
+                }
+            }
+
+            .task-notes {
+                overflow: hidden;
+                max-width: 100%;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: #888;
+
+                .task {
+                    color: #626262;
+                }
+            }
+        }
+
+        .td-total {
+            color: #999;
+            width: 66px;
+            text-align: right;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            cursor: pointer;
+            background: linear-gradient(#fff, #f0f0f0);
+            border: 0;
+            border-radius: 3px;
+            box-shadow: inset 0 0 0 1px rgba(34, 34, 34, 0.25);
+            color: #545454;
+            display: flex;
+            justify-content: center;
+            height: 24px;
+            width: 24px;
+            margin: auto;
+
+            &:hover {
+                background: linear-gradient(#fcfcfc, #e8e8e8);
+            }
+        }
+    }
+
+    tfoot {
+        tr {
+            background-image: linear-gradient(#f6f6f6, #e6e6e6);
+            position: relative;
+            text-shadow: 0 1px 0 #fff;
+            border-top: 1px solid #ccc;
+            padding: 0;
+            border-bottom: 1px solid #ccc !important;
+
+        }
+        .td-name {
+            text-align: left;
+            border-left: 1px solid #ccc;
+            border-bottom-left-radius: 6px;
+            border-bottom: 1px solid #ccc;
+        }
+        .td-weekday {
+            text-align: right;
+            color: #999;
+            padding-left: 0;
+            padding-right: 10px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .td-total {
+            color: #333;
+            width: 66px;
+            text-align: right;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .td-delete {
+            border-right: 1px solid #ccc;
+            border-bottom-right-radius: 6px;
+        }
+    }
+
+
+}
+
+
+

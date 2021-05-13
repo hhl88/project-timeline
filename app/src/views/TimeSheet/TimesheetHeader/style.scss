@@ -1,4 +1,9 @@
 .timesheet-wrapper {
+    margin-bottom: 20px;
+    width: inherit;
+    padding: 12px;
+    margin-right: auto;
+    margin-left: auto;
     .left-side-wrapper {
         .pagination {
             margin-right: 4px;
@@ -40,9 +45,6 @@
     }
 
     .right-side-wrapper {
-        .btn-calendar {
-            margin-right: 10px;
-        }
         .btn-type-wrapper {
             margin-right: 10px;
             display: inline;
@@ -58,26 +60,6 @@
                 }
             }
         }
-        .dropdown-teammate {
-            width: 300px;
-        }
-    }
-
-
-    .btn {
-        background-color: #f0f0f0;
-        box-shadow: inset 0 0 0 1px rgba(34, 34, 34, 0.25);
-        padding: 0 16px!important;
-        //border: none;
-        //border-radius: 0;
-        &:hover {
-            background: #e8e8e8;
-        }
-    }
-    .btn-icon {
-        min-width: 36px !important;
-        padding: 0 !important;
-
     }
 }
 

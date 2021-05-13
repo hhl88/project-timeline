@@ -1,0 +1,67 @@
+.report-statistics-wrapper {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    .item {
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding-left: 10px;
+        padding-right: 10px;
+        position: relative;
+
+        &.progress-wrapper {
+            .progress-hours {
+                left: 20px;
+                position: absolute;
+                top: -1px;
+            }
+
+            .progress-info {
+                padding: 0 0 0 100px;
+            }
+
+            .progress-helper {
+                display: flex;
+                align-items: center;
+
+                .progress-icon-helper {
+                    margin-right: 4px;
+                }
+            }
+
+            ::v-deep .v-progress-circular__info {
+                font-size: 22px;
+                color: #222;
+                font-weight: 600;
+            }
+        }
+
+        .label {
+            color: #626262;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .data {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.25;
+            margin: 0;
+        }
+
+        .checkbox {
+            margin-top: 3px;
+
+            ::v-deep label {
+                font-size: 13px;
+
+            }
+        }
+
+        .hint {
+            color: #888;
+            margin-top: 7px;
+            font-size: 13px;
+        }
+    }
+}

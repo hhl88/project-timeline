@@ -3,12 +3,17 @@ import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
 import moment from '@/plugins/moment.js';
+import lodash from '@/plugins/lodash.js';
+import utils from '@/plugins/utils.js';
+
 import vuetify from '@/plugins/vuetify';
 
 
 Vue.config.productionTip = false;
 
 Vue.use(moment);
+Vue.use(lodash);
+Vue.use(utils);
 
 router.beforeEach((to, from, next) => {
     document.title = to.name || 'Project Timeline';
