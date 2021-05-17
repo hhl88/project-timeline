@@ -1,58 +1,22 @@
 <template>
-    <BaseDropdown
-        :btn-class-name='btnClassName'
-        :close-menu='closeTeammate'
-        :props-to-pass='propsToPass'
-    >
-        <template v-slot:btn-label>
-            <v-row align-content='center' justify='space-between'>
-                <span :class='[classLabel, "label"]'> {{ label || 'Teammate' }}</span>
-                <v-icon small>mdi-menu-down</v-icon>
-            </v-row>
-        </template>
-        <template v-slot:dropdown-content>
-            <Input
-                label='Search...'
-                leftIcon='mdi-magnify'
-                :clearable='true'
-                :props-to-pass='{
-                    dense: true
-                }'
-                :class-name='$style["input"]'
-            />
 
-            <v-list dense>
-                <v-subheader>Employee</v-subheader>
-                <v-list-item-group
-                    v-model='selectedTeammate'
-                    mandatory
-                    color='primary'
-                >
-                    <v-list-item
-                        v-for='(item, i) in list'
-                        :key='i'
-                        :value='item'
-                        active-class='primary--text text--accent-4'
-                    >
-                        <v-list-item-content
-                            v-on:click='() => onSelectTeammate(item)'
-                        >
-                            <v-list-item-title v-text='item'></v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-list-item-group>
-            </v-list>
-        </template>
-    </BaseDropdown>
+    <DropdownSearch :list='list'
+                    :selected-id='selectedUser && selectedUser.user_id'
+                    :btn-class-name='$style["dropdown-teammate"]'
+                    @onSelectItem='onSelectTeammate'
+                    key-child-id='user_id'
+                    key-child-title='user_name'
+                    label='Teammate'
+                    :props-to-pass='{ left: true, nudgeBottom: 10}'
+    />
 </template>
 
 <script>
-import BaseDropdown from '@/components/BaseDropdown/BaseDropdown';
-import Input from '@/components/Input/Input';
+import DropdownSearch from '@/components/DropdownSearch/DropdownSearch';
 
 export default {
     name: 'DropdownTeammate',
-    components: { BaseDropdown, Input },
+    components: { DropdownSearch },
     props: [
         'menuClassName',
         'btnClassName',
@@ -64,15 +28,35 @@ export default {
     ],
     data: () => ({
         closeTeammate: 0,
-        selectedTeammate: null,
-        list: ['Teammate 1', 'Teammate 2 long long', 'Teammate 3 long long long long long long']
+        list: [],
+        selectedUser: null
     }),
+    computed: {
+        users() {
+            return this.$store.getters.users;
+        },
+        userId() {
+            return this.$store.getters.userId;
+        }
+    },
     methods: {
         onSelectTeammate: function(value) {
             this.closeTeammate++;
-            this.selectedTeammate = value;
-            console.log('onSelectTeammate', value);
+            this.$store.dispatch('setUser', value);
         }
+    },
+    watch: {
+        users(newValue) {
+            this.list = [{
+                id: 1,
+                title: 'Employee',
+                items: [...newValue]
+            }];
+        },
+        userId(newValue) {
+            this.selectedUser = this.users.find(user => user.user_id === newValue);
+        }
+
     }
 };
 </script>
@@ -101,5 +85,9 @@ export default {
 .input {
     padding: 10px !important;
     background-color: #fff;
+}
+
+.dropdown-teammate {
+    width: 130px;
 }
 </style>

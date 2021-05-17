@@ -12,10 +12,6 @@ export default function install (Vue) {
         $moment: {
             get () {
                 return moment;
-            },
-            format(str){
-                console.log('format', str);
-                return moment.format(str);
             }
         }
     });

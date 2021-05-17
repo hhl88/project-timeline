@@ -36,11 +36,15 @@ const routes = [
         children: [
             {
                 path: '',
-                component: () => import('@/views/TimeSheet/Timesheet.vue')
+                component: () => import('@/views/TimeSheet/TimeSheet.vue')
             },
             {
                 path: ':showType/:year/:month/:day',
-                component: () => import('@/views/TimeSheet/Timesheet.vue')
+                component: () => import('@/views/TimeSheet/TimeSheet.vue')
+            },
+            {
+                path: ':showType/:year/:month/:day/:userId',
+                component: () => import('@/views/TimeSheet/TimeSheet.vue')
             }
 
         ],
@@ -126,7 +130,7 @@ const routes = [
     }
 ];
 
-store.dispatch('router/setRouter', routes.map(route => {
+store.dispatch('setRouter', routes.map(route => {
     return {
         path: route.path,
         aliasPaths: route.aliasPaths,

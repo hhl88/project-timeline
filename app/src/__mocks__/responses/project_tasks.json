@@ -1,0 +1,58 @@
+[
+    {
+        "project_id": 1,
+        "task_id": 1,
+        "billable": true
+    },
+    {
+        "project_id": 1,
+        "task_id": 2,
+        "billable": true
+    },
+    {
+        "project_id": 1,
+        "task_id": 3,
+        "billable": true
+    },
+    {
+        "project_id": 1,
+        "task_id": 4,
+        "billable": true
+    },
+    {
+        "project_id": 1,
+        "task_id": 5,
+        "billable": false
+    },
+    {
+        "project_id": 1,
+        "task_id": 6,
+        "billable": false
+    },
+
+    {
+        "project_id": 2,
+        "task_id": 1,
+        "billable": true
+    },
+    {
+        "project_id": 2,
+        "task_id": 2,
+        "billable": false
+    },
+    {
+        "project_id": 2,
+        "task_id": 3,
+        "billable": false
+    },
+    {
+        "project_id": 2,
+        "task_id": 4,
+        "billable": false
+    },
+    {
+        "project_id": 2,
+        "task_id": 5,
+        "billable": false
+    }
+]

@@ -1,22 +1,19 @@
 <template>
-    <div :class="[$style['timesheet-day-wrapper']]">
-        <div
-            :class="[$style['btn-add-entry']]"
+    <div :class='$style["time-sheet-day-wrapper"]'>
+        <div :class='$style["btn-add-entry"]'
         >
             <div :class='$style["btn-label"]'>
-                <div :class='$style["btn-icon"]' @click='openDialog = true'>
+                <div :class='$style["btn-icon"]' @click='openAddNewEntryDialog'>
                     <v-icon color='white' x-large>mdi-plus</v-icon>
                 </div>
                 <div :class='$style["btn-text"]'>New entry</div>
             </div>
         </div>
-        <v-row
-            :class='[$style["weekdays-header"]]'
-            align-self='center'>
+        <div :class='[$style["weekdays-header"]]'>
             <Button
                 v-for='(weekday) in $_.orderBy(Object.values(weekdays), ["order"], ["asc"])'
                 :key='weekday.label'
-                :btn-class-name="[$style['btn-weekday'], weekday.date === selectedDate ? 'selected' : '']"
+                :btn-class-name="[$style['btn-weekday'], weekday.date === pickerDate ? 'selected' : '']"
                 :propsToPass='{
                     disabled: weekday.label === "Total"
                 }'
@@ -35,11 +32,21 @@
                 </template>
 
             </Button>
-        </v-row>
+        </div>
+        <template v-if='loading'>
+            <div>
+                <v-progress-linear
+                    indeterminate
+                    rounded
+                    color='primary'
+                ></v-progress-linear>
+            </div>
+        </template>
         <div :class='$style["day-view-entry-list"]'
-             v-if='selectedWeekday && weekdays[selectedWeekday] && weekdays[selectedWeekday].rows'
+             v-else-if='selectedWeekday && weekdays[selectedWeekday] && weekdays[selectedWeekday].rows.length > 0'
         >
-            <v-row
+
+            <div
                 v-for='(row) in weekdays[selectedWeekday].rows'
                 :key='row.id'
                 :class='$style["day-view-entry-item"]'
@@ -56,8 +63,8 @@
                         <span :class='$style["notes"]'>{{ row.notes }}</span>
                     </div>
                 </v-col>
-                <v-col cols='1'>
-                    <span :class='$style["entry-time"]'>{{ $utils.toTime(row.hours) }}</span>
+                <v-col cols='1' class='text-right'>
+                    <span :class='[$style["entry-time"]]'>{{ $utils.toTime(row.hours) }}</span>
                 </v-col>
                 <v-col cols='2'>
                     <Button :btn-class-name="[$style['btn-action']]">
@@ -74,90 +81,62 @@
                         </template>
                     </Button>
                 </v-col>
-            </v-row>
+            </div>
 
+        </div>
+        <div v-else class='empty-box'>
+            <div>There are no timesheets for this period.</div>
+            <div>Please add a new one.</div>
         </div>
 
         <div :class='$style["day-view-summary"]'
              v-if='selectedWeekday && weekdays[selectedWeekday] && weekdays[selectedWeekday].rows.length > 0'
         >
-            <v-row align='center'>
-                <v-col cols='8' :class='$style["label"]'>
-                    <span>Total:</span>
-                </v-col>
-                <v-col cols='1' :class='$style["time"]'>
-                    <span>{{ $utils.toTime(weekdays[selectedWeekday].hours) }}</span>
-                </v-col>
-            </v-row>
-
+            <v-col cols='8' :class='$style["label"]'>
+                <span>Total:</span>
+            </v-col>
+            <v-col cols='1' :class='$style["time"]'>
+                <span>{{ $utils.toTime(weekdays[selectedWeekday].hours) }}</span>
+            </v-col>
         </div>
 
 
-        <NewEntryDialog
-            v-if='openDialog'
-            :date='selectedDate'
-            @onSubmit='handleAddNewEntry'
-            @onClose='openDialog = false' />
+
 
     </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 
 import Button from '@/components/Button/Button';
-import NewEntryDialog from '@/views/TimeSheet/NewEntryDialog/NewEntryDialog';
 
 export default {
     name: 'TimesheetDay',
-    components: { NewEntryDialog, Button },
-    props: [
-        'entries',
-        'date'
-    ],
+    components: { Button },
     data: () => ({
-        dayEntries: [],
         weekdays: [],
-        selectedDate: '',
         selectedWeekday: '',
-        openDialog: false
     }),
-    created() {
-        const dayEntries = [
+    computed: {
+        ...mapState(
             {
-                id: 1,
-                notes: 'This is sample time entry',
-                task_name: 'Marketing',
-                user_id: 1,
-                hours: 2.81,
-                project_code: 'SAMPLE',
-                project_id: 1,
-                project_name: 'Fixed Fee Project',
-                client_name: '[SAMPLE] Client A',
-                billable: true,
-                is_archived: false,
-                is_billed: false,
-                is_closed: false,
-                timer_started_at: null,
-                updated_at: '2021-04-27T01:04:47Z',
-                user_active: true,
-                user_assignment_active: true,
-                spent_at: '2021-04-27'
+                timeSheets: state => state.timeSheets.timeSheets,
+                pickerDate: state => state.timeSheets.pickerDate,
+                loading: state => state.timeSheets.loading
+            })
 
-
-            }
-        ];
-        this.selectedDate = this.date;
-        this.selectedWeekday = this.$moment(this.selectedDate).format('ddd');
-        this.handleDayEntries(dayEntries);
+    },
+    created() {
+        this.selectedWeekday = this.$moment(this.pickerDate).format('ddd');
+        this.handleDayEntries(this.timeSheets);
     },
     methods: {
-        handleAddNewEntry: function(payload) {
-            this.openDialog = false;
-            console.log('payload', payload);
+        openAddNewEntryDialog: function() {
+            this.$emit('openNewEntryDialog');
         },
         handleDayEntries: function(dayEntries) {
-            this.dayEntries = dayEntries;
-            const selectedDate = this.$moment(this.selectedDate);
+            const selectedDate = this.$moment(this.pickerDate);
             const monday = selectedDate.clone().day(1);
 
             const weekdays = {
@@ -219,8 +198,8 @@ export default {
                 }
             };
             dayEntries.forEach(entry => {
-                const weekday = this.$moment(entry.spent_at).format('ddd');
-                weekdays[weekday].hours = entry.hours;
+                const weekday = this.$moment(entry.start_at).format('ddd');
+                weekdays[weekday].hours += entry.hours;
                 weekdays[weekday].rows.push(entry);
                 weekdays.total.hours += entry.hours;
             });
@@ -228,23 +207,36 @@ export default {
 
         },
         changeDate: function(newDate) {
-            this.selectedDate = newDate;
-            this.selectedWeekday = this.$moment(this.selectedDate).format('ddd');
-
+            this.selectedWeekday = this.$moment(newDate).format('ddd');
             this.$emit('onChangeDate', newDate);
         }
     },
     watch: {
-        dayEntries: function(newDayEntries) {
-            this.handleDayEntries(newDayEntries);
+        timeSheets(newTimeSheets) {
+            this.handleDayEntries(newTimeSheets);
         },
-        date: function(newDate) {
-            this.selectedDate = newDate;
-            this.selectedWeekday = this.$moment(this.selectedDate).format('ddd');
+        pickerDate(newDate) {
+            this.selectedWeekday = this.$moment(newDate).format('ddd');
         }
     }
 };
 </script>
+
+
+<style scoped lang='scss'>
+.empty-box {
+    background-color: rgb(240, 240, 240);
+    color: #626262;
+    font-size: 20px;
+    padding: 64px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+</style>
+
 
 <style module lang='scss'>
 @import 'style';

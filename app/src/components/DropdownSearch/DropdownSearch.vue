@@ -1,5 +1,5 @@
 <template>
-    <Dropdown
+    <BaseDropdown
         :btn-class-name='[$style["btn"], btnClassName]'
         :close-menu='closeDropdown'
         :props-to-pass='propsToPass'
@@ -29,22 +29,19 @@
                         {{ keyTitle ? item[keyTitle] : item.title }}
                     </v-subheader>
                     <v-list-item-group
-                        v-model='selectedItem'
-                        :key='"items-"  + keyId ? item[keyId] : item.id'
+                        v-model='value'
+                        :key='"items-"  + (keyId ? item[keyId] : item.id) + "-" + keyTitle ? item[keyTitle] : item.title'
                     >
                         <v-list-item
                             v-for='(child) in item.items'
-                            :key='"dropdown-" + keyId ? child[keyId] : (keyTitle ? child[keyTitle] : child.title)'
-                            :value='keyId ? child[keyId] : child.id'
+                            :key='"dropdown-" + (keyChildId ? child[keyChildId] : child.id) + "-" + keyChildTitle ? child[keyChildTitle] : child.title'
+                            :value='keyChildId ? child[keyChildId] : child.id'
                             active-class='primary--text text--accent-4'
+                            :class="{ 'is-active': keyChildId ? child[keyChildId] : child.id === value }"
                         >
-                            <!--                            <v-list-item-icon v-if='child.icon'>-->
-                            <!--                                <v-icon v-text="child.icon"></v-icon>-->
-                            <!--                            </v-list-item-icon>-->
-                            <v-list-item-content
-                                v-on:click='() => onSelectItem(keyId ? child[keyId] : child.id)'
-                            >
-                                <v-list-item-title>{{ keyTitle ? child[keyTitle] : child.title }}</v-list-item-title>
+                            <v-list-item-content>
+                                <v-list-item-title>{{ keyChildTitle ? child[keyChildTitle] : child.title }}
+                                </v-list-item-title>
                             </v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
@@ -52,20 +49,20 @@
 
             </v-list>
         </template>
-    </Dropdown>
+    </BaseDropdown>
 </template>
 
 <script>
-import Dropdown from '@/components/BaseDropdown/BaseDropdown';
+import BaseDropdown from '@/components/BaseDropdown/BaseDropdown';
 import Input from '@/components/Input/Input';
 
 export default {
     name: 'DropdownSearch',
-    components: { Dropdown, Input },
+    components: { BaseDropdown, Input },
     props: [
         'menuClassName',
         'btnClassName',
-        'value',
+        'selectedId',
         'propsToPass',
         'closeMenu',
         'label',
@@ -73,23 +70,28 @@ export default {
         'classDropdownIcon',
         'list',
         'keyId',
-        'keyTitle'
+        'keyTitle',
+        'keyChildId',
+        'keyChildTitle'
     ],
     data: () => ({
-        closeDropdown: 0,
-        selectedItem: null
+        closeDropdown: 0
     }),
-    created() {
-        if (this.value) {
-            this.selectedItem = this.value;
-        }
-    },
-    methods: {
-        onSelectItem: function(id) {
-            this.closeDropdown++;
-            this.$emit('onSelectItem', id);
+    computed: {
+        value: {
+            get() {
+                console.log('getter', this.selectedId);
+                return this.selectedId;
+            },
+            set(newVal) {
+                this.closeDropdown++;
+                console.log('set', newVal);
+                this.$emit('onSelectItem', newVal);
+            }
         }
     }
+
+
 };
 </script>
 

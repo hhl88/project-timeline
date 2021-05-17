@@ -7,7 +7,7 @@
         <v-card>
             <v-card-title class='title grey lighten-2'>
                 New Time Entry
-                <span class='date'>{{ $moment(date).format('dddd, DD MMM YYYY') }}</span>
+                <span class='date' v-if='showType === "day"'>{{ $moment(date).format('dddd, DD MMM YYYY') }}</span>
             </v-card-title>
 
             <v-card-text>
@@ -15,7 +15,7 @@
                     <div class='project-task'>Project/Task</div>
 
                     <DropdownSearch :list='clientProjects'
-                                    :value='selectedProject.project_id'
+                                    :selectedId='selectedProject && selectedProject.project_id'
                                     :btn-class-name='$style["btn"]'
                                     @onSelectItem='handleSelectProject'
                     >
@@ -31,7 +31,7 @@
 
 
                     <DropdownSearch :list='projectTasks'
-                                    :value='selectedTask.task_id'
+                                    :selectedId='selectedTask && selectedTask.task_id'
                                     :btn-class-name='$style["dropdown-task"]'
                                     @onSelectItem='handleSelectTask'
                     >
@@ -42,7 +42,7 @@
                         </template>
                     </DropdownSearch>
 
-                    <v-row>
+                    <v-row v-if='showType === "day"'>
                         <v-col cols='8'>
                             <TextArea
                                 label='Notes (optional)'
@@ -74,7 +74,7 @@
                     @onClick='handleSubmit'
                 >
                     <template v-slot:btn-label>
-                        {{ hours > 0 ? 'Save Entry' : 'Start Timer' }}
+                        {{ showType === 'week' ? 'Save Row' : hours > 0 ? 'Save Entry' : 'Start Timer' }}
                     </template>
                 </Button>
                 <Button
@@ -114,7 +114,24 @@ export default {
         notes: '',
         hours: 0
     }),
-    created() {
+    computed: {
+        userId() {
+            return this.$store.getters.userId;
+        },
+        users() {
+            return this.$store.getters.users;
+        },
+        showType() {
+            return this.$store.getters.showType;
+        },
+        pickerDate() {
+            return this.$store.getters.pickerDate;
+        },
+        range() {
+            return this.$store.getters.range;
+        }
+    },
+    mounted() {
         this.dialog = true;
         this.projects = [
             {
@@ -336,12 +353,12 @@ export default {
             }
         }
 
+    },
+    watch: {
+        selectedTask: function(newTask) {
+            console.log('selectedTask', newTask);
+        }
     }
-    // watch: {
-    //     openDialog: function(newDate) {
-    //         this.dialog = newDate;
-    //     }
-    // }
 };
 </script>
 

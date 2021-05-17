@@ -1,5 +1,5 @@
-const getRouter = state => state.router;
+const router = state => state.router;
 
 export default {
-    getRouter,
+    router,
 };

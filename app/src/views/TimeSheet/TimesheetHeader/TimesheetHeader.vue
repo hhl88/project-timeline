@@ -1,5 +1,5 @@
 <template>
-    <div :class="$style['timesheet-wrapper']">
+    <div :class="$style['time-sheets-header-wrapper']">
         <v-row justify='space-between' align-self='center'>
             <div :class="$style['left-side-wrapper']">
                 <div :class="$style['pagination']">
@@ -21,13 +21,16 @@
                     <span :class="[$style['text']]">{{ getDate() }}</span>
                 </h1>
                 <a :class="[$style['back-to-today']]"
-                   v-if='isNotToday'
+                   v-if='showType === "day" && isNotToday()'
                    v-on:click='backToToday'>Return to Today</a>
+                <a :class="[$style['back-to-today']]"
+                   v-else-if='showType === "week" && isNotThisWeek()'
+                   v-on:click='backToToday'>Return to This Week</a>
 
             </div>
             <div :class="[$style['right-side-wrapper']]">
                 <DropdownCalendar
-                    :value='date'
+                    :value='pickerDate'
                     @onSelectDate='onSelectDate' />
 
                 <div :class="[$style['btn-type-wrapper']]">
@@ -57,6 +60,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import DropdownTeammate from '@/views/TimeSheet/DropdownTeammate/DropdownTeammate';
 import Button from '@/components/Button/Button';
 import DropdownCalendar from '@/views/TimeSheet/DropdownCalendar/DropdownCalendar';
@@ -64,11 +69,16 @@ import DropdownCalendar from '@/views/TimeSheet/DropdownCalendar/DropdownCalenda
 export default {
     name: 'TimesheetHeader',
     components: { DropdownCalendar, Button, DropdownTeammate },
-    props: [
-        'showType',
-        'date',
-        'selectedTeammate'
-    ],
+    computed: {
+        ...mapState(
+            {
+                selectedTeammate: state => state.timeSheets.userId,
+                users: state => state.users.users,
+                pickerDate: state => state.timeSheets.pickerDate,
+                range: state => state.timeSheets.range,
+                showType: state => state.timeSheets.showType
+            })
+    },
     methods: {
         toPrevDate: function() {
             this.$emit('toPrevDate');
@@ -81,10 +91,10 @@ export default {
         },
         getDate: function() {
             if (this.showType === 'day') {
-                return this.$moment(this.date).format('dddd, DD MMM');
+                return this.$moment(this.pickerDate).format('dddd, DD MMM');
             }
             if (this.showType === 'week') {
-                const monday = this.$moment(this.date).day(1);
+                const monday = this.$moment(this.pickerDate).day(1);
                 const sunday = monday.clone().add(6, 'days');
                 return `${monday.format('DD MMM')} - ${sunday.format()}`;
             }
@@ -93,7 +103,7 @@ export default {
         },
         getHint: function() {
             if (this.showType === 'day') {
-                const date = this.$moment(this.date).startOf('day');
+                const date = this.$moment(this.pickerDate).startOf('day');
                 const today = this.$moment().startOf('day');
                 const diff = date.diff(today, 'd');
                 if (diff === 0) {
@@ -111,10 +121,17 @@ export default {
             return null;
         },
         isNotToday: function() {
-            const date = this.$moment(this.date).startOf('day');
+            const date = this.$moment(this.pickerDate).startOf('day');
             const today = this.$moment().startOf('day');
             const diff = date.diff(today, 'd');
             return diff !== 0;
+        },
+        isNotThisWeek: function() {
+            const monday = this.$moment(this.range.startDate).startOf('day');
+            const sunday = this.$moment(this.range.endDate).startOf('day');
+            const today = this.$moment().startOf('day');
+            return !today.isBetween(monday, sunday, undefined, '[]');
+
         },
         onSelectDate: function(newDate) {
             this.$emit('onSelectDate', newDate);

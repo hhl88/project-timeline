@@ -44,7 +44,6 @@ export default {
     }),
     watch: {
         closeMenu: function() {
-            console.log('watch', 'closeMenu');
             this.menu = false;
         }
     }

@@ -1,7 +1,19 @@
 <template>
 
-    <v-simple-table class='timesheet-week-wrapper'>
+    <v-simple-table class='time-sheet-week-wrapper'>
         <template v-slot:default>
+            <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+            </colgroup>
             <thead>
             <tr>
                 <th class='th-name'>
@@ -22,49 +34,77 @@
             </tr>
             </thead>
             <tbody>
-            <tr
-                v-for='row in $_.orderBy(Object.values(modifiedRows), ["project_id", "updated_at", ],["asc", "desc"])'
-                class='week-view-entry'
-                :key='row.id+ "-row"'
-            >
-                <td class='td-name'>
-                    <div class='project-client'>
-                            <span class='project'>[{{ row.project_code }}] {{ row.project_name
-                                }}</span>
-                        <span class='client'>({{ row.client_name }})</span>
-                    </div>
-                    <div class='task-notes'>
-                        <span class='task'>{{ row.task_name }}</span>
-                    </div>
-                </td>
-                <td v-for='weekday in $_.orderBy(Object.values(row.weekdays), ["order"], ["asc"])'
-                    :key='row.id + "-" +weekday.id'
-                    :class='weekday.label ? "td-weekday" : "td-total"'>
-                    <Input v-if='weekday.label'
-                           :class-name='[$style["input-hours"]]'
-                           :value='weekday.hours > 0 ? $utils.toTime(weekday.hours) : ""'
-                           :props-to-pass='{
+            <template v-if='loading'>
+                <tr>
+                    <td :colspan='10' class='td-loading'>
+                        <v-progress-linear
+                            indeterminate
+                            rounded
+                            color='primary'
+                        ></v-progress-linear>
+                    </td>
+                </tr>
+            </template>
+            <template v-else-if='$_.orderBy(Object.values(modifiedRows)).length > 0'>
+                <tr
+
+                    v-for='row in $_.orderBy(Object.values(modifiedRows), ["project_id", "updated_at", ],["asc", "desc"])'
+                    class='week-view-entry'
+                    :key='row.id+ "-row"'
+                >
+                    <td class='td-name'>
+                        <div class='project-client'>
+                            <span class='project'>[{{ row.project_code }}] {{ row.project_name }}</span>
+                            <span class='client'>({{ row.client_name }})</span>
+                        </div>
+                        <div class='task-notes'>
+                            <span class='task'>{{ row.task_name }}</span>
+                        </div>
+                    </td>
+                    <td v-for='weekday in $_.orderBy(Object.values(row.weekdays), ["order"], ["asc"])'
+                        :key='row.id + "-" +weekday.id'
+                        :class='weekday.label ? "td-weekday" : "td-total"'>
+                        <Input v-if='weekday.label'
+                               :class-name='[$style["input-hours"]]'
+                               :value='weekday.hours > 0 ? $utils.toTime(weekday.hours) : ""'
+                               :props-to-pass='{
                                     rules: [
                                         (v) =>  !v || (v &&v.trim().length ===0) ||$utils.isTime(v, true)
                                     ]
                                }'
-                           @onChange='(newValue) => handleChangeInput(row.id,weekday.id, newValue)'
+                               @onChange='(newValue) => handleChangeInput(row.id,weekday.id, newValue)'
 
-                    />
-                    <span v-else>{{ $utils.toTime(weekday.hours) }}</span>
-                </td>
-                <td class='delete'>
-                    <div class='btn-delete' @click='() =>handleDelete(row.id)'>
-                        <v-icon small>mdi-close</v-icon>
-                    </div>
-                </td>
-            </tr>
+                        />
+                        <span v-else>{{ $utils.toTime(weekday.hours) }}</span>
+                    </td>
+                    <td class='delete'>
+                        <div class='btn-delete' @click='() =>handleDelete(row.id)'>
+                            <v-icon small>mdi-close</v-icon>
+                        </div>
+                    </td>
+                </tr>
+            </template>
+
+            <template v-else>
+                <tr>
+                   <td colspan='10' class='empty-box-wrapper'>
+                       <div class='empty-box'>
+                           <div>
+                               <div>There are no timesheets for this period.</div>
+                               <div>Please add a new one.</div>
+                           </div>
+                       </div>
+                   </td>
+                </tr>
+
+            </template>
+
             </tbody>
 
             <tfoot>
             <tr>
                 <td class='td-name'>
-                    <Button :btn-class-name='$style["btn-add-row"]'>
+                    <Button :btn-class-name='$style["btn-add-row"]' @onClick='openAddNewEntryDialog'>
                         <template v-slot:btn-label>
                             <v-icon>mdi-plus</v-icon>
                             <span>New Row</span>
@@ -100,26 +140,34 @@
 </template>
 
 <script>
-import json from '@/__mocks__/responses/timesheet_week.json';
 import Input from '@/components/Input/Input';
 import Button from '@/components/Button/Button';
+import { mapState } from 'vuex';
 
 export default {
-    name: 'TimesheetWeek',
+    name: 'TimeSheetWeek',
     components: { Button, Input },
-    props: [
-        'entries',
-        'date'
-    ],
     data: () => ({
         weekdays: [],
         rows: {},
         modifiedRows: {}
     }),
-    created() {
-        this._handleEntries([...json.day_entries]);
+    mounted() {
+        this.handleChangeDate(this.pickerDate);
+        this.handleEntries(this.timeSheets);
+    },
+    computed: {
+        ...mapState({
+            timeSheets: state => state.timeSheets.timeSheets,
+            pickerDate: state => state.timeSheets.pickerDate,
+            loading: state => state.timeSheets.loading
+        })
     },
     methods: {
+        openAddNewEntryDialog: function() {
+            console.log('openAddNewEntryDialog');
+            this.$emit('openNewEntryDialog');
+        },
         handleChangeInput: function(rowId, weekDayId, newValue) {
             const num = this.$utils.timeToNum(newValue, true);
             if (!isNaN(num)) {
@@ -142,12 +190,11 @@ export default {
             });
             delete this.modifiedRows[rowId];
         },
-        _handleEntries: function(newEntries) {
-
-            const monday = this.$moment(this.date);
+        handleChangeDate: function(newPickerDate) {
+            const monday = this.$moment(newPickerDate);
             this.rows = {};
-
-            const weekdays = {
+            this.modifiedRows = {};
+            this.weekdays = {
                 Mon: {
                     order: 0,
                     id: 'Mon',
@@ -203,10 +250,13 @@ export default {
                     hours: 0
                 }
             };
-            this.weekdays = this.$_.cloneDeep(weekdays);
+            // this.weekdays = this.$_.cloneDeep(weekdays);
+        },
+        handleEntries: function(newEntries) {
 
-            newEntries.forEach((d) => {
-                const entry = d.day_entry;
+            const weekdays = this.$_.cloneDeep(this.weekdays);
+
+            newEntries.forEach((entry) => {
                 const id = `${entry.project_id}-${entry.task_id}`;
 
                 if (!this.rows[id]) {
@@ -224,7 +274,7 @@ export default {
                         create_at: entry.create_at
                     };
                 }
-                const weekday = this.$moment(entry.spent_at).format('ddd');
+                const weekday = this.$moment(entry.start_at).format('ddd');
 
                 this.rows[id].weekdays[weekday].hours += entry.hours;
                 this.rows[id].hours += entry.hours;
@@ -235,6 +285,16 @@ export default {
                 this.modifiedRows = this.$_.cloneDeep(this.rows);
             });
         }
+    },
+    watch: {
+        timeSheets(newTimeSheets) {
+            this.handleChangeDate(this.pickerDate);
+            this.handleEntries(newTimeSheets);
+        },
+        pickerDate(newPickerDate) {
+            this.handleChangeDate(newPickerDate);
+        }
+
     }
 };
 </script>

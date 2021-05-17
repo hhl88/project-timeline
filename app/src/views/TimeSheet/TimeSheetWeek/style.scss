@@ -1,4 +1,4 @@
-.timesheet-week-wrapper {
+.time-sheet-week-wrapper {
 
     tr:hover {
         background-color: transparent !important;
@@ -56,6 +56,30 @@
     }
 
     tbody {
+        .td-loading {
+            padding: 0 !important;
+        }
+
+        .empty-box-wrapper {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            .empty-box {
+                margin: 0 -16px;
+                background-color: rgb(240, 240, 240);
+                color: #626262;
+                font-size: 20px;
+                padding: 64px;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-content: center;
+            }
+        }
+
+
+
         .td-name {
             text-align: left;
 

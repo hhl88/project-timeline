@@ -14,6 +14,9 @@
 import Header from '@/components/Header/Header';
 
 export default {
-    components: { Header }
+    components: { Header },
+    mounted() {
+        this.$store.dispatch('fetchUsers');
+    }
 };
 </script>
