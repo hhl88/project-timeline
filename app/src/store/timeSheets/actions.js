@@ -1,7 +1,7 @@
 import axios from '@/services/axios';
 
 const fetchTimeSheets = ({ state, commit }) => {
-    if (state.userId) {
+    if (state.userId && !state.loading) {
         commit('TIME_SHEETS_LOADING');
         axios.get(`/users/${state.userId}/tasks`, {
             params: {

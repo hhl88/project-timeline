@@ -13,7 +13,11 @@
             <Button
                 v-for='(weekday) in $_.orderBy(Object.values(weekdays), ["order"], ["asc"])'
                 :key='weekday.label'
-                :btn-class-name="[$style['btn-weekday'], weekday.date === pickerDate ? 'selected' : '']"
+                :btn-class-name="[
+                    $style['btn-weekday'],
+                    weekday.date === pickerDate && 'selected' ,
+                    weekday.hours > 0 && weekday.label !== 'Total' && 'tracked'
+                ]"
                 :propsToPass='{
                     disabled: weekday.label === "Total"
                 }'
@@ -101,8 +105,6 @@
         </div>
 
 
-
-
     </div>
 </template>
 
@@ -116,7 +118,7 @@ export default {
     components: { Button },
     data: () => ({
         weekdays: [],
-        selectedWeekday: '',
+        selectedWeekday: ''
     }),
     computed: {
         ...mapState(
@@ -128,18 +130,19 @@ export default {
 
     },
     created() {
-        this.selectedWeekday = this.$moment(this.pickerDate).format('ddd');
+        this.handleChangePickerDate(this.pickerDate);
         this.handleDayEntries(this.timeSheets);
     },
     methods: {
         openAddNewEntryDialog: function() {
             this.$emit('openNewEntryDialog');
         },
-        handleDayEntries: function(dayEntries) {
-            const selectedDate = this.$moment(this.pickerDate);
-            const monday = selectedDate.clone().day(1);
+        handleChangePickerDate(newPickerDate) {
+            this.selectedWeekday = this.$moment(newPickerDate).format('ddd');
+            const selectedDate = this.$moment(newPickerDate);
+            const monday = selectedDate.clone().weekday(0);
 
-            const weekdays = {
+            this.weekdays = {
                 Mon: {
                     order: 0,
                     label: 'M',
@@ -197,6 +200,10 @@ export default {
                     rows: []
                 }
             };
+            console.log('this', this.weekdays, this.pickerDate);
+        },
+        handleDayEntries: function(dayEntries) {
+            const weekdays = this.$_.cloneDeep(this.weekdays);
             dayEntries.forEach(entry => {
                 const weekday = this.$moment(entry.start_at).format('ddd');
                 weekdays[weekday].hours += entry.hours;
@@ -213,9 +220,11 @@ export default {
     },
     watch: {
         timeSheets(newTimeSheets) {
+            this.handleChangePickerDate(this.pickerDate);
             this.handleDayEntries(newTimeSheets);
         },
         pickerDate(newDate) {
+            // console.log('pickerDate', this.pickerDate);
             this.selectedWeekday = this.$moment(newDate).format('ddd');
         }
     }
@@ -234,6 +243,10 @@ export default {
     justify-content: center;
     align-content: center;
     flex-direction: column;
+}
+
+.tracked {
+    border-bottom: 2px solid red;
 }
 </style>
 

@@ -7,6 +7,7 @@
     td {
         border-bottom: 1px solid #ccc !important;
 
+
     }
 
     thead {
@@ -16,8 +17,15 @@
             text-shadow: 0 1px 0 #fff;
             border-top: 1px solid #ccc;
             padding: 0;
-            border-bottom: 1px solid #ccc !important;
 
+            &:not(.tracked) {
+                border-bottom: 1px solid #ccc !important;
+
+            }
+
+            &.tracked {
+                border-bottom: 2px solid red !important;
+            }
         }
 
         .th-name {
@@ -41,6 +49,7 @@
 
             .date {
                 font-size: 12px;
+                font-weight: normal;
             }
 
             border-bottom: 1px solid #ccc;
@@ -146,7 +155,6 @@
             text-shadow: 0 1px 0 #fff;
             border-top: 1px solid #ccc;
             padding: 0;
-            border-bottom: 1px solid #ccc !important;
 
         }
         .td-name {

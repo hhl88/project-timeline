@@ -284,7 +284,7 @@ export default {
 
                     return {
                         id: v.project_id,
-                        title: `$[${v.project_code}] ${v.project_name}`
+                        title: `[${v.project_code}] ${v.project_name}`
                     };
                 });
                 return {

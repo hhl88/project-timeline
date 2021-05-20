@@ -1,5 +1,5 @@
 <template>
-    <div class='reports-header-wrapper'>
+    <div class='reports-header-wrapper' ref='reportHeader'>
         <v-row class='header-wrapper' justify='space-between' align-self='center'>
             <div class='left-side-wrapper'>
                 <div class='pagination'>
@@ -66,8 +66,19 @@ export default {
         selectedShowOptionIdx: 0,
         startInterval: null,
         endInterval: null,
+        ro: null
     }),
+    mounted() {
+        // this.ro = new ResizeObserver(this.onResize)
+        //     .observe(this.$refs.reportHeader);
+    },
+    beforeDestroy() {
+        // this.ro.unobserve(this.$refs.reportHeader);
+    },
     methods: {
+        // onResize() {
+        //     this.$emit('onResize', this.$refs.reportHeader.offsetHeight + 10);
+        // },
         toPrevPeriod: function() {
 
         },

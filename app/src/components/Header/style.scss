@@ -17,3 +17,6 @@
 //    }
 //}
 
+::v-deep .v-btn--active, .v-list-item--active{
+    font-weight: bold;
+}

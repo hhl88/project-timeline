@@ -1,5 +1,5 @@
 <template>
-    <v-row class='report-statistics-wrapper'>
+    <v-row class='report-statistics-wrapper' ref='reportStatistics'>
         <div class='item'>
             <div class='label'>
                 Hours Tracked
@@ -67,7 +67,11 @@ export default {
     props: [],
     data: () => ({
         checkbox: false
-    })
+    }),
+    mounted() {
+        console.log('11', this.$refs.reportStatistics.offsetHeight);
+        this.$emit('onResize', this.$refs.reportStatistics.offsetHeight + 30);
+    }
 };
 </script>
 

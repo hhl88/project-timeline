@@ -21,7 +21,7 @@
                 >
                     <v-list-item
                         :value='item.id'
-                        active-class='primary--text text--accent-4'
+                        active-class='active-text text--accent-4'
                     >
                         <v-list-item-content
                             v-on:click='() => onSelectItem(item.id)'

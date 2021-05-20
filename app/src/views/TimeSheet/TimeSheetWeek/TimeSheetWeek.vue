@@ -19,14 +19,25 @@
                 <th class='th-name'>
                 </th>
                 <template v-for='(weekday) in $_.orderBy(Object.values(weekdays), ["order"], ["asc"])'>
-                    <th :class='weekday.label ? "th-weekday" : "th-total"'
-                        :key='"header-"+weekday.id'>
-                        <div class='label'>
-                            {{ weekday.label }}
-                        </div>
-                        <div class='date'>
-                            {{ weekday.date }}
-                        </div>
+                    <th :class='[
+                        weekday.label ? "th-weekday" : "th-total",
+                        weekday.hours > 0 && weekday.label && "tracked"
+                    ]'
+                        :key='"header-"+weekday.id'
+                    >
+                        <router-link
+                            v-if='weekday && weekday.date'
+                            style='text-decoration: none; color: #666;'
+                            :to='"/time/day/"+ weekday.date.format("YYYY/MM/DD")'
+                            v-on:click.native='$store.dispatch("setTimeSheetType", "day")'>
+                            <div class='label'>
+                                {{ weekday.label }}
+                            </div>
+                            <div class='date'>
+                                {{ weekday.date.format('DD MMM') }}
+                            </div>
+                        </router-link>
+
                     </th>
                 </template>
                 <th class='th-delete'>
@@ -87,14 +98,14 @@
 
             <template v-else>
                 <tr>
-                   <td colspan='10' class='empty-box-wrapper'>
-                       <div class='empty-box'>
-                           <div>
-                               <div>There are no timesheets for this period.</div>
-                               <div>Please add a new one.</div>
-                           </div>
-                       </div>
-                   </td>
+                    <td colspan='10' class='empty-box-wrapper'>
+                        <div class='empty-box'>
+                            <div>
+                                <div>There are no timesheets for this period.</div>
+                                <div>Please add a new one.</div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
 
             </template>
@@ -199,49 +210,49 @@ export default {
                     order: 0,
                     id: 'Mon',
                     label: 'M',
-                    date: monday.format('DD MMM'),
+                    date: monday,
                     hours: 0
                 },
                 Tue: {
                     order: 1,
                     id: 'Tue',
                     label: 'T',
-                    date: monday.clone().add(1, 'days').format('DD MMM'),
+                    date: monday.clone().add(1, 'days'),
                     hours: 0
                 },
                 Wed: {
                     order: 2,
                     id: 'Wed',
                     label: 'W',
-                    date: monday.clone().add(2, 'days').format('DD MMM'),
+                    date: monday.clone().add(2, 'days'),
                     hours: 0
                 },
                 Thu: {
                     order: 3,
                     id: 'Thu',
                     label: 'Th',
-                    date: monday.clone().add(3, 'days').format('DD MMM'),
+                    date: monday.clone().add(3, 'days'),
                     hours: 0
                 },
                 Fri: {
                     order: 4,
                     label: 'F',
                     id: 'Fri',
-                    date: monday.clone().add(4, 'days').format('DD MMM'),
+                    date: monday.clone().add(4, 'days'),
                     hours: 0
                 },
                 Sat: {
                     order: 5,
                     id: 'Sat',
                     label: 'S',
-                    date: monday.clone().add(5, 'days').format('DD MMM'),
+                    date: monday.clone().add(5, 'days'),
                     hours: 0
                 },
                 Sun: {
                     order: 6,
                     id: 'Sun',
                     label: 'Su',
-                    date: monday.clone().add(6, 'days').format('DD MMM'),
+                    date: monday.clone().add(6, 'days'),
                     hours: 0
                 },
                 total: {
@@ -250,6 +261,7 @@ export default {
                     hours: 0
                 }
             };
+            console.log('weekDay', this.weekdays);
             // this.weekdays = this.$_.cloneDeep(weekdays);
         },
         handleEntries: function(newEntries) {
@@ -301,6 +313,7 @@ export default {
 
 <style scoped lang='scss'>
 @import "style.scss";
+
 
 .v-data-table td {
     //border-bottom: none !important;

@@ -36,10 +36,14 @@ export default {
 }
 
 ::v-deep .v-card {
-    overflow: scroll;
-
+    height: calc(100% - 48px);
     .v-card__text {
         padding-top: 40px;
+        height: 100%;
     }
+}
+
+::v-deep .v-tab--active {
+    font-weight: bold;
 }
 </style>

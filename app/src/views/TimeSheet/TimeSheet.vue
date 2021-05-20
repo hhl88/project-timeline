@@ -71,7 +71,7 @@ export default {
         }
     },
     methods: {
-        handleAddNewEntry:function(payload) {
+        handleAddNewEntry: function(payload) {
             console.log('payload', payload);
         },
         handleOpenNewEntryDialog: function() {
@@ -143,7 +143,7 @@ export default {
         range: {
             handler(newValue) {
                 if (newValue) {
-                    this.$store.dispatch('fetchTimeSheets');
+                    // this.$store.dispatch('fetchTimeSheets');
                 }
             },
             deep: true
@@ -153,6 +153,13 @@ export default {
             if (!this.$store.getters.userId && newUsers && newUsers.length > 0) {
                 this.$store.dispatch('setUser', newUsers[0].user_id);
             }
+        },
+        pickerDate() {
+            console.log('newPickerDate');
+            this.$store.dispatch('fetchTimeSheets');
+        },
+        showType() {
+            this.$store.dispatch('fetchTimeSheets');
         }
     }
 };

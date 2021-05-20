@@ -3,9 +3,9 @@
         <template v-slot:default>
             <colgroup>
                 <col style='width:5%;' />
-                <col style='width:75%;' />
-                <col style='width:10%;' />
-                <col style='width:10%;' />
+                <col style='width:65%;' />
+                <col style='width:14%;' />
+                <col style='width:16%;' />
             </colgroup>
             <thead>
             <tr>
@@ -17,12 +17,24 @@
                     ></v-checkbox>
                 </th>
                 <template v-for='(header) in headers'>
-                    <th :key='header.value'>{{ header.text }}</th>
+                    <th :key='header.value' :class='header.align ? "text-" + header.align : ""'>{{ header.text }}</th>
                 </template>
             </tr>
             </thead>
             <tbody>
-            <template v-for='(row) in rows'>
+            <template v-if='loading'>
+                <tr>
+                    <td colspan='4' class='td-loading'>
+                        <v-progress-linear
+                            indeterminate
+                            rounded
+                            color='primary'
+                        ></v-progress-linear>
+                    </td>
+                </tr>
+
+            </template>
+            <template v-else v-for='(row) in rows'>
                 <tr class='row-clickable' :key='row.user_name' @click='handleClickRow(row)'>
                     <td>
                         <v-checkbox
@@ -31,7 +43,7 @@
                         </v-checkbox>
                     </td>
                     <td>{{ row.user_name }}</td>
-                    <td>{{ row.hours }}</td>
+                    <td class='text-right'>{{ row.hours }}</td>
                     <td>
                         <Button
                         >
@@ -65,8 +77,8 @@ export default {
         totalRows: 0,
         rows: [],
         headers: [
-            { text: 'Team members', value: 'user_name', align: 'start' },
-            { text: 'Time', value: 'hours', align: 'end' },
+            { text: 'Team members', value: 'user_name', align: 'left' },
+            { text: 'Time', value: 'hours', align: 'right' },
             { text: '', value: 'button', align: 'center' }
         ],
         selected: []
@@ -172,5 +184,9 @@ export default {
 
 .row-clickable {
     cursor: pointer;
+}
+
+.td-loading {
+    padding: 0 !important;
 }
 </style>

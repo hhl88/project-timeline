@@ -36,7 +36,7 @@
                             v-for='(child) in item.items'
                             :key='"dropdown-" + (keyChildId ? child[keyChildId] : child.id) + "-" + keyChildTitle ? child[keyChildTitle] : child.title'
                             :value='keyChildId ? child[keyChildId] : child.id'
-                            active-class='primary--text text--accent-4'
+                            active-class='active-text text--accent-4'
                             :class="{ 'is-active': keyChildId ? child[keyChildId] : child.id === value }"
                         >
                             <v-list-item-content>

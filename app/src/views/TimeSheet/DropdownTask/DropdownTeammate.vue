@@ -32,7 +32,7 @@
                         v-for='(item, i) in list'
                         :key='i'
                         :value='item'
-                        active-class='primary--text text--accent-4'
+                        active-class='active-text text--accent-4'
                     >
                         <v-list-item-content
                             v-on:click='() => onSelectTeammate(item)'

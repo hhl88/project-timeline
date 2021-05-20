@@ -94,7 +94,7 @@ export default {
                 return this.$moment(this.pickerDate).format('dddd, DD MMM');
             }
             if (this.showType === 'week') {
-                const monday = this.$moment(this.pickerDate).day(1);
+                const monday = this.$moment(this.pickerDate).weekday(0);
                 const sunday = monday.clone().add(6, 'days');
                 return `${monday.format('DD MMM')} - ${sunday.format()}`;
             }

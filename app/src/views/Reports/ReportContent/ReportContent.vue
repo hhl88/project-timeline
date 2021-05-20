@@ -41,6 +41,7 @@
             :loading='loading'
             :hide-default-footer='rows.length === 0'
             class='elevation-4'
+            :height='height - 118'
         >
 
             <template
@@ -79,6 +80,9 @@ import Button from '@/components/Button/Button';
 export default {
     name: 'ReportContent',
     components: { Button, Dropdown },
+    props: [
+        'height'
+    ],
     data: () => ({
         tab: null,
         onlyActiveProjects: false,
@@ -196,6 +200,69 @@ export default {
                     hours: 4.02,
                     billable_hours: '1.02 hours (100%)',
                     billable_amount: '€ 3.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
+                },
+                {
+                    name: '[SAMPLE] Fixed Fee Project 4',
+                    client_name: '[SAMPLE] Client A 2',
+                    hours: 1.02,
+                    billable_hours: '7.02 hours (100%)',
+                    billable_amount: '€ 0.00'
                 },
                 {
                     name: '[SAMPLE] Fixed Fee Project 4',
